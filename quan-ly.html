@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <title>Quản lý lời chúc | Mai Thành Tâm</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #eef5ff;
+      color: #163758;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: auto;
+      padding: 25px 16px 60px;
+    }
+
+    .header {
+      background: linear-gradient(
+        135deg, #102e55, #1767a8
+      );
+      color: white;
+      border-radius: 22px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      margin: 8px 0;
+      font-size: clamp(24px, 4vw, 36px);
+    }
+
+    .header p {
+      opacity: .85;
+      margin-bottom: 0;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 8px 30px #12345610;
+      margin-bottom: 20px;
+    }
+
+    .login {
+      max-width: 430px;
+      margin: 55px auto;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cbd9ea;
+      border-radius: 12px;
+      font: inherit;
+      margin: 8px 0;
+      outline-color: #2173bd;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 17px;
+      background: #1767a8;
+      color: white;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { background: #10548d; }
+    button:disabled { opacity: .6; cursor: wait; }
+
+    .secondary { background: #60758b; }
+    .secondary:hover { background: #42566b; }
+
+    .danger { background: #b64c64; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit, minmax(180px, 1fr)
+      );
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 34px;
+      color: #1767a8;
+      margin-top: 8px;
+    }
+
+    .wishes {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit, minmax(280px, 1fr)
+      );
+      gap: 16px;
+    }
+
+    .wish {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 5px 20px #1234560b;
+      border-top: 4px solid #6eafe3;
+      overflow-wrap: anywhere;
+    }
+
+    .wish h3 {
+      margin: 0 0 7px;
+      color: #14568f;
+    }
+
+    .wish time {
+      color: #75869b;
+      font-size: 13px;
+    }
+
+    .wish p {
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .hidden { display: none !important; }
+
+    .status {
+      color: #44617d;
+      margin: 12px 0;
+      line-height: 1.6;
+    }
+
+    .error { color: #b42336; }
+
+    .footer {
+      text-align: center;
+      margin-top: 35px;
+      color: #70859a;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <header class="header">
+    <div>🎓 MAI THANH TAM · ADMIN</div>
+    <h1>Graduation Wishes 💙</h1>
+    <p>Những lời chúc dành cho ngày tốt nghiệp</p>
+  </header>
+
+  <!-- ĐĂNG NHẬP -->
+  <section id="loginSection" class="panel login">
+    <h2>🔐 Đăng nhập quản trị</h2>
+    <p>Chỉ tài khoản được cấp quyền mới xem được lời chúc.</p>
+
+    <form id="loginForm">
+      <label for="email">Email quản trị</label>
+      <input id="email" type="email"
+             placeholder="Nhập email"
+             autocomplete="username" required>
+
+      <label for="password">Mật khẩu</label>
+      <input id="password" type="password"
+             placeholder="Nhập mật khẩu"
+             autocomplete="current-password" required>
+
+      <button id="loginButton" type="submit">
+        Đăng nhập
+      </button>
+    </form>
+
+    <p id="loginStatus" class="status"
+       role="status"></p>
+  </section>
+
+  <!-- TRANG QUẢN TRỊ -->
+  <main id="dashboard" class="hidden">
+
+    <div class="stats">
+      <div class="stat">
+        Tổng lời chúc
+        <strong id="totalCount">0</strong>
+      </div>
+
+      <div class="stat">
+        Lời chúc hôm nay
+        <strong id="todayCount">0</strong>
+      </div>
+    </div>
+
+    <section class="panel">
+      <h2>💌 Danh sách lời chúc</h2>
+
+      <input id="searchInput"
+             placeholder="🔎 Tìm tên khách hoặc lời chúc...">
+
+      <div class="actions">
+        <button id="refreshButton" type="button">
+          🔄 Làm mới
+        </button>
+
+        <button id="excelButton" type="button">
+          📊 Xuất Excel
+        </button>
+
+        <button id="logoutButton"
+                class="danger" type="button">
+          Đăng xuất
+        </button>
+      </div>
+
+      <p id="dataStatus" class="status"
+         role="status"></p>
+    </section>
+
+    <div id="wishesList" class="wishes"></div>
+  </main>
+
+  <footer class="footer">
+    Designed &amp; Developed by Mai Thanh Tam
+    · Information Technology
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="./config.js"></script>
+
+<script>
+"use strict";
+
+const loginSection = document.getElementById("loginSection");
+const dashboard = document.getElementById("dashboard");
+const loginStatus = document.getElementById("loginStatus");
+const dataStatus = document.getElementById("dataStatus");
+const wishesList = document.getElementById("wishesList");
+const searchInput = document.getElementById("searchInput");
+
+let db = null;
+let allWishes = [];
+
+function setLoginStatus(message, isError = false) {
+  loginStatus.textContent = message;
+  loginStatus.classList.toggle("error", isError);
+}
+
+function setDataStatus(message, isError = false) {
+  dataStatus.textContent = message;
+  dataStatus.classList.toggle("error", isError);
+}
+
+function showLogin() {
+  loginSection.classList.remove("hidden");
+  dashboard.classList.add("hidden");
+  allWishes = [];
+  wishesList.replaceChildren();
+}
+
+function showDashboard() {
+  loginSection.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+}
+
+function formatDate(value) {
+  return new Date(value).toLocaleString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh"
+  });
+}
+
+function localDateKey(value) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date(value));
+}
+
+function renderWishes() {
+  const keyword = searchInput.value
+    .trim().toLocaleLowerCase("vi");
+
+  const filtered = allWishes.filter(w => {
+    const content = (
+      String(w.guest_name || "") + " " +
+      String(w.message || "")
+    ).toLocaleLowerCase("vi");
+
+    return content.includes(keyword);
+  });
+
+  wishesList.replaceChildren();
+
+  if (filtered.length === 0) {
+    setDataStatus("Không tìm thấy lời chúc phù hợp.");
+    return;
+  }
+
+  setDataStatus(
+    "Đang hiển thị " + filtered.length + " lời chúc."
+  );
+
+  for (const wish of filtered) {
+    const card = document.createElement("article");
+    card.className = "wish";
+
+    const name = document.createElement("h3");
+    name.textContent = "💙 " + wish.guest_name;
+
+    const time = document.createElement("time");
+    time.textContent = formatDate(wish.created_at);
+
+    const message = document.createElement("p");
+    message.textContent = wish.message;
+
+    card.append(name, time, message);
+    wishesList.appendChild(card);
+  }
+}
+
+async function loadWishes() {
+  setDataStatus("Đang tải danh sách lời chúc...");
+
+  const results = [];
+  const pageSize = 500;
+  let from = 0;
+
+  while (true) {
+    const { data, error } = await db
+      .from("graduation_wishes")
+      .select("id,guest_name,message,created_at")
+      .order("created_at", { ascending: false })
+      .range(from, from + pageSize - 1);
+
+    if (error) {
+      allWishes = [];
+      wishesList.replaceChildren();
+      document.getElementById("totalCount")
+        .textContent = "0";
+      document.getElementById("todayCount")
+        .textContent = "0";
+
+      setDataStatus(
+        "Không thể đọc danh sách: " + error.message,
+        true
+      );
+      return false;
+    }
+
+    results.push(...data);
+
+    if (data.length < pageSize) break;
+
+    from += pageSize;
+  }
+
+  allWishes = results;
+
+  const today = localDateKey(new Date());
+
+  document.getElementById("totalCount")
+    .textContent = allWishes.length;
+
+  document.getElementById("todayCount")
+    .textContent = allWishes.filter(
+      w => localDateKey(w.created_at) === today
+    ).length;
+
+  renderWishes();
+  return true;
+}
+
+async function checkAccess() {
+  const { data: authData, error: authError } =
+    await db.auth.getUser();
+
+  if (authError || !authData.user) {
+    showLogin();
+    return;
+  }
+
+  const { data, error } = await db
+    .from("wish_admins")
+    .select("user_id")
+    .eq("user_id", authData.user.id)
+    .maybeSingle();
+
+  if (error || !data) {
+    showLogin();
+    setLoginStatus(
+      "Tài khoản chưa được cấp quyền quản trị.",
+      true
+    );
+    return;
+  }
+
+  showDashboard();
+  await loadWishes();
+}
+
+document.getElementById("loginForm")
+  .addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = document.getElementById("loginButton");
+    button.disabled = true;
+    setLoginStatus("Đang đăng nhập...");
+
+    try {
+      const email = document.getElementById("email").value;
+      const password =
+        document.getElementById("password").value;
+
+      const { error } = await db.auth.signInWithPassword({
+        email, password
+      });
+
+      if (error) {
+        setLoginStatus(error.message, true);
+        return;
+      }
+
+      document.getElementById("password").value = "";
+      setLoginStatus("");
+      await checkAccess();
+
+    } catch (error) {
+      setLoginStatus(error.message, true);
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+document.getElementById("refreshButton")
+  .addEventListener("click", loadWishes);
+
+searchInput.addEventListener("input", renderWishes);
+
+document.getElementById("logoutButton")
+  .addEventListener("click", async () => {
+    await db.auth.signOut();
+    showLogin();
+    setLoginStatus("Đã đăng xuất.");
+  });
+
+document.getElementById("excelButton")
+  .addEventListener("click", () => {
+    if (allWishes.length === 0) {
+      setDataStatus("Chưa có dữ liệu để xuất Excel.");
+      return;
+    }
+
+    if (!window.XLSX) {
+      setDataStatus(
+        "Không tải được thư viện Excel. Hãy kiểm tra mạng.",
+        true
+      );
+      return;
+    }
+
+    const rows = allWishes.map((w, index) => ({
+      "STT": index + 1,
+      "Thời gian gửi": formatDate(w.created_at),
+      "Tên khách mời": w.guest_name,
+      "Lời chúc": w.message
+    }));
+
+    const sheet = XLSX.utils.json_to_sheet(rows);
+
+    sheet["!cols"] = [
+      { wch: 8 },
+      { wch: 24 },
+      { wch: 30 },
+      { wch: 75 }
+    ];
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook, sheet, "Loi chuc"
+    );
+
+    XLSX.writeFile(
+      workbook,
+      "Loi-chuc-tot-nghiep-Mai-Thanh-Tam.xlsx"
+    );
+  });
+
+async function init() {
+  if (
+    !window.SUPABASE_URL ||
+    !window.SUPABASE_ANON_KEY ||
+    !window.supabase
+  ) {
+    setLoginStatus(
+      "Chưa cấu hình Supabase hoặc chưa tải được thư viện.",
+      true
+    );
+    document.getElementById("loginButton").disabled = true;
+    return;
+  }
+
+  db = window.supabase.createClient(
+    window.SUPABASE_URL,
+    window.SUPABASE_ANON_KEY
+  );
+
+  await checkAccess();
+}
+
+init();
+</script>
+</body>
+</html>
