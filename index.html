@@ -183,7 +183,7 @@ footer{text-align:center;padding:18px 10px;color:var(--muted);font-size:.8rem;li
 </main>
 
 <audio id="backgroundMusic" loop preload="auto" autoplay playsinline>
-  <source src="delosound-emotional-soft-piano-inspiring-427637.mp3" type="audio/mpeg">
+  <source src="./delosound-emotional-soft-piano-inspiring-427637.mp3" type="audio/mpeg">
 </audio>
 <button class="music-toggle" id="musicToggle" type="button" aria-pressed="false">♫ Bật nhạc nền</button>
 
@@ -214,48 +214,45 @@ if (INVITATION.address) document.getElementById("eventAddress").textContent = IN
 if (INVITATION.mapUrl) { const a=document.getElementById("mapLink"); a.href=INVITATION.mapUrl; document.getElementById("mapWrap").hidden=false; }
 const music = document.getElementById("backgroundMusic");
 const musicToggle = document.getElementById("musicToggle");
-const toast=document.getElementById("toast");
-function notify(msg){toast.textContent=msg;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),3500)}
+const toast = document.getElementById("toast");
 
-function syncMusicButton(){
+function notify(msg) {
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3500);
+}
+
+function syncMusicButton() {
   const playing = !music.paused && !music.ended;
-  musicToggle.textContent = playing ? "♫ Tắt nhạc nền" : "♫ Bật nhạc nền";
+  musicToggle.textContent = playing
+    ? "♫ Tắt nhạc nền"
+    : "♫ Bật nhạc nền";
   musicToggle.setAttribute("aria-pressed", String(playing));
 }
-music.addEventListener("play",syncMusicButton);
-music.addEventListener("pause",syncMusicButton);
-music.addEventListener("ended",syncMusicButton);
 
-async function startMusic(showError=false){
+async function startMusic() {
   try {
+    music.volume = 0.7;
     await music.play();
     syncMusicButton();
-    return true;
-  } catch (e) {
+  } catch (error) {
     syncMusicButton();
-    if (showError) {
-      if (music.error) {
-        notify("Chưa tìm thấy file nhạc. Hãy thêm assets/nhac-nen.mp3 rồi tải lại website.");
-      } else {
-        notify("Trình duyệt chưa cho tự phát nhạc. Hãy chạm nút “Bật nhạc nền” để nghe.");
-      }
-    }
-    return false;
+    notify("Chưa phát được nhạc. Hãy nhấn nút Bật nhạc nền.");
   }
 }
 
-async function toggleMusic(){
+music.addEventListener("play", syncMusicButton);
+music.addEventListener("pause", syncMusicButton);
+music.addEventListener("ended", syncMusicButton);
+
+musicToggle.addEventListener("click", async () => {
   if (music.paused) {
-    await startMusic(true);
+    await startMusic();
   } else {
     music.pause();
     syncMusicButton();
   }
-}
-musicToggle.addEventListener("click",toggleMusic);
-
-// Thử phát ngay khi trang vừa mở. Trình duyệt có thể chặn autoplay có tiếng.
-window.addEventListener("load",()=>{ startMusic(false); });
+});
 
 document.getElementById("openInvite").addEventListener("click",async ()=>{
   document.getElementById("invitation").classList.add("visible");
