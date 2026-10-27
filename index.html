@@ -57,7 +57,21 @@
 /* GUESTBOOK */
 .wish-wrap{max-width:790px;margin:30px auto 0;text-align:left}.wish-list{display:grid;gap:12px;margin:20px 0}.wish-item{background:#fff;border:1px solid #d7e8f5;border-radius:17px;padding:18px 20px;box-shadow:0 8px 22px #174f7710}.wish-item strong{font:700 15px 'Space Grotesk';color:#11578d}.wish-item p{margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;color:#45667e;line-height:1.7}.wish-item time{font-size:11px;color:#839bad;float:right}.wish-status{font-size:13px;color:#547e9d;text-align:center}.wish-form{display:grid;gap:12px;padding:24px;border:1px solid #cde2f2;background:#fff;border-radius:22px;box-shadow:0 15px 40px #154e7a13}.wish-form label{font-size:13px;font-weight:700;color:#245b85}.wish-form input,.wish-form textarea,.link-tool input{width:100%;padding:13px 15px;border:1px solid #caddec;border-radius:12px;background:#fcfeff;color:#123b5c;font:inherit}.wish-form textarea{min-height:100px;resize:vertical}.wish-form .btn{justify-self:start}.wish-modal{position:fixed;inset:0;z-index:100;background:#071d38a8;display:none;place-items:center;padding:18px;overflow:auto}.wish-modal.open{display:grid}.wish-dialog{width:min(520px,100%);max-height:90vh;overflow:auto;border-radius:24px;background:#f5faff;padding:25px;box-shadow:0 25px 90px #001e3c66}.wish-dialog h3{margin:0 0 10px;font:500 31px 'Playfair Display';color:#104d83}.wish-dialog .close{float:right;background:none;border:0;font-size:26px;color:#456a8b}.wish-dialog p{color:#617e94;font-size:13px;line-height:1.6}.footer-credit{display:block;margin-top:10px;color:#537b9c;font-size:12px;letter-spacing:.02em}.footer-credit strong{color:#0b578d}.footer-credit a{text-decoration:none;border-bottom:1px solid #8ab9d9}
 @media(max-width:650px){.bright-details .info-grid{grid-template-columns:1fr}.bright-details .info-card{padding:22px}.meet-spot{padding:20px}.meet-spot strong{font-size:16px}.wish-form{padding:17px}}
+/* Tên khách mời - Luxury Calligraphy */
+#guestName,
+.guest-name {
+  font-family: 'Pinyon Script', cursive !important;
+  font-size: clamp(43px, 7vw, 76px) !important;
+  font-weight: 400 !important;
+  line-height: 1.55 !important;
+  letter-spacing: 0.3px;
+  color: #194A80 !important;
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 8px rgba(31, 80, 132, 0.13);
+}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 </head>
 <body>
 <canvas aria-hidden="true" id="stars"></canvas><div class="glow one"></div><div class="glow two"></div><div class="progress" id="progress"></div>
