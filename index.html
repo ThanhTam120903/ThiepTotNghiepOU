@@ -59,6 +59,7 @@
 @media(max-width:650px){.bright-details .info-grid{grid-template-columns:1fr}.bright-details .info-card{padding:22px}.meet-spot{padding:20px}.meet-spot strong{font-size:16px}.wish-form{padding:17px}}
 /* Tên khách mời - Luxury Calligraphy */
 #guestName,
+#guestPaper,
 .guest-name {
   font-family: 'Pinyon Script', cursive !important;
   font-size: clamp(43px, 7vw, 76px) !important;
@@ -101,7 +102,7 @@
 <section class="final-section shell"><div class="eyebrow reveal">06 / LỜI CẢM ƠN</div><h2 class="display reveal">Hẹn gặp bạn<br/><em>trong ngày vui.</em></h2><p class="body-copy reveal">Cảm ơn bạn đã đồng hành. Hẹn gặp bạn trong ngày vui của Tâm!</p><div class="final-actions reveal"><button aria-controls="wishModal" class="btn" id="rsvpButton" type="button">✉ Gửi lời chúc</button><a aria-label="Gọi điện cho Mai Thành Tâm" class="btn light" href="tel:0336731278">☎ Gọi Tâm: 0336 731 278</a><button class="btn light" id="copyLink" type="button">↗ Chia sẻ thiệp mời</button></div><div class="signature reveal">Mai Thành Tâm</div><div class="pill reveal">&lt;endOfChapter /&gt; · &lt;beginNewJourney /&gt;</div></section>
 <footer class="footer"><div>THIỆP MỜI TỐT NGHIỆP · <span>MAI THÀNH TÂM</span> · 2027</div><div class="footer-credit">Designed &amp; Developed by <strong>Mai Thanh Tam</strong> · Information Technology</div></footer>
 </div><div aria-labelledby="wishTitle" aria-modal="true" class="wish-modal" id="wishModal" role="dialog"><div class="wish-dialog"><button aria-label="Đóng" class="close" id="closeWish" type="button">×</button><h3 id="wishTitle">Gửi lời chúc đến Tâm</h3><p>Một lời chúc nhỏ sẽ làm ngày tốt nghiệp thêm ý nghĩa.</p><form class="wish-form" id="wishForm"><label for="wishName">Tên của bạn</label><input id="wishName" maxlength="60" name="name" placeholder="Nhập tên của bạn" required=""/><label for="wishMessage">Lời chúc</label><textarea id="wishMessage" maxlength="500" name="message" placeholder="Viết lời chúc dành cho Tâm..." required=""></textarea><button class="btn" id="submitWish" type="submit">Gửi lời chúc ♥</button><div class="wish-status" id="formStatus" role="status"></div></form></div></div>
-<audio id="music" loop="" preload="none"><source src="./delosound-emotional-soft-piano-inspiring-427637.mp3" type="audio/mpeg"/></audio>
+<audio id="music" preload="metadata"><source src="./tron-ven-chinh-minh.mp3" type="audio/mpeg"/></audio>
 <button aria-label="Bật hoặc tắt nhạc" aria-pressed="false" class="music-toggle" id="musicToggle" type="button">♫</button><div aria-live="polite" class="toast" id="toast" role="status"></div>
 <script>
 'use strict';
@@ -122,7 +123,50 @@ const music=document.getElementById('music'),musicToggle=document.getElementById
 let opened=false,toastTimer;
 function toast(s){const el=document.getElementById('toast');el.textContent=s;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
 function syncMusic(){const on=!music.paused;musicToggle.classList.toggle('playing',on);musicToggle.textContent=on?'♫':'♪';musicToggle.setAttribute('aria-pressed',String(on))}
-async function playMusic(){try{music.volume=.55;await music.play()}catch(e){toast('Bạn có thể bật nhạc bằng nút ♫ ở góc màn hình.')}syncMusic()}
+/* Nhạc bắt đầu từ 0:57 và lặp lại từ mốc này */
+const MUSIC_START = 57;
+let musicReady = false;
+function seekToMusicStart(){
+  if (Number.isFinite(music.duration) && music.duration > MUSIC_START) {
+    music.currentTime = MUSIC_START;
+    musicReady = true;
+    return true;
+  }
+  return false;
+}
+music.addEventListener('loadedmetadata', seekToMusicStart);
+music.addEventListener('ended', async () => {
+  if (seekToMusicStart()) {
+    try { await music.play(); } catch (error) { console.warn('Không thể phát lại nhạc:', error); }
+  }
+});
+music.addEventListener('error', () => toast('Không tải được nhạc. Hãy kiểm tra file tron-ven-chinh-minh.mp3 trên GitHub.'));
+async function playMusic(){
+  try {
+    music.volume = .55;
+    if (!musicReady) {
+      if (music.readyState < 1) {
+        await new Promise((resolve, reject) => {
+          const onReady = () => { cleanup(); resolve(); };
+          const onError = () => { cleanup(); reject(new Error('Không tải được nhạc')); };
+          const cleanup = () => {
+            music.removeEventListener('loadedmetadata', onReady);
+            music.removeEventListener('error', onError);
+          };
+          music.addEventListener('loadedmetadata', onReady);
+          music.addEventListener('error', onError);
+          music.load();
+        });
+      }
+      if (!seekToMusicStart()) throw new Error('Bài nhạc ngắn hơn 57 giây hoặc không thể tua.');
+    }
+    await music.play();
+  } catch (error) {
+    console.warn('Lỗi phát nhạc:', error);
+    toast('Chưa phát được nhạc. Kiểm tra file MP3 hoặc nhấn nút ♪ để thử lại.');
+  }
+  syncMusic();
+}
 music.addEventListener('play',syncMusic);music.addEventListener('pause',syncMusic);
 musicToggle.addEventListener('click',()=>{if(music.paused)playMusic();else music.pause()});
 const reveals=[...document.querySelectorAll('.reveal')];
