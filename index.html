@@ -25,7 +25,18 @@ button{cursor:pointer}
 .cover-inner{width:min(100%,620px);text-align:center;position:relative;z-index:1}
 .crest{margin:0 auto 15px;width:64px;height:64px;border:2px solid var(--blue);border-radius:20px 20px 20px 5px;display:grid;place-items:center;background:#ffffffa8;color:var(--blue);font-weight:900;font-size:1.2rem;transform:rotate(-4deg);box-shadow:0 10px 25px #0756a514}
 .cover-overline{font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;font-weight:800;color:var(--blue)}
-.cover h1{font:italic clamp(2.7rem,9vw,5rem)/1.05 Georgia,serif;color:var(--blue);margin:15px 0}
+.cover h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.3rem, 7.5vw, 4.5rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: var(--blue);
+  margin: 15px 0;
+  max-width: 100%;
+  overflow-wrap: normal;
+}
 .cover .sub{letter-spacing:.1em;font-weight:800;font-size:clamp(.85rem,2.5vw,1.1rem)}
 .cover-rule{width:90px;height:1px;background:var(--blue-mid,#2c7dcc);margin:24px auto}
 .cover .welcome{color:var(--muted);line-height:1.8;max-width:440px;margin:0 auto 24px}
