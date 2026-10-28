@@ -70,11 +70,6 @@
   overflow-wrap: anywhere;
   text-shadow: 0 2px 8px rgba(31, 80, 132, 0.13);
 }
-/* Trình phát Zing MP3 - hiển thị sau khi mở phong bì */
-.zing-player{position:fixed;left:16px;bottom:16px;width:min(340px,calc(100vw - 32px));z-index:45;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px #0a3d6e40;background:#241637;display:none}
-.zing-player.visible{display:block}
-.zing-player iframe{display:block;width:100%;height:180px;border:0}
-@media(max-width:600px){.zing-player{left:10px;bottom:10px;width:min(300px,calc(100vw - 20px))}}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 </head>
@@ -107,17 +102,9 @@
 <footer class="footer"><div>THIỆP MỜI TỐT NGHIỆP · <span>MAI THÀNH TÂM</span> · 2027</div><div class="footer-credit">Designed &amp; Developed by <strong>Mai Thanh Tam</strong> · Information Technology</div></footer>
 </div><div aria-labelledby="wishTitle" aria-modal="true" class="wish-modal" id="wishModal" role="dialog"><div class="wish-dialog"><button aria-label="Đóng" class="close" id="closeWish" type="button">×</button><h3 id="wishTitle">Gửi lời chúc đến Tâm</h3><p>Một lời chúc nhỏ sẽ làm ngày tốt nghiệp thêm ý nghĩa.</p><form class="wish-form" id="wishForm"><label for="wishName">Tên của bạn</label><input id="wishName" maxlength="60" name="name" placeholder="Nhập tên của bạn" required=""/><label for="wishMessage">Lời chúc</label><textarea id="wishMessage" maxlength="500" name="message" placeholder="Viết lời chúc dành cho Tâm..." required=""></textarea><button class="btn" id="submitWish" type="submit">Gửi lời chúc ♥</button><div class="wish-status" id="formStatus" role="status"></div></form></div></div>
 <div aria-live="polite" class="toast" id="toast" role="status"></div>
-<!-- Trình phát chính thức Zing MP3: không hỗ trợ tua tự động chính xác tới 0:57 -->
-<audio id="backgroundMusic" preload="auto" loop>
+<audio id="backgroundMusic" preload="auto" style="display:none">
   <source src="./nhac-tot-nghiep.mp3" type="audio/mpeg">
 </audio>
-  <iframe
-    src="https://zingmp3.vn/embed/song/s0YMBJkIc13F?start=true"
-    width="100%" height="180" scrolling="no"
-    allow="autoplay; encrypted-media; fullscreen"
-    title="Trọn Vẹn Chính Mình (Rock Version) - Zing MP3">
-  </iframe>
-</div>
 <script>
 'use strict';
 /* THÔNG TIN LỄ TỐT NGHIỆP — BẠN CÓ THỂ CHỈNH LẠI KHI CẦN */
@@ -133,14 +120,30 @@ const guest=(new URLSearchParams(location.search).get('guest')||'').trim().slice
 document.getElementById('guestName').textContent=guest;document.getElementById('guestPaper').textContent=guest;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const intro=document.getElementById('intro'),site=document.getElementById('site'),openBtn=document.getElementById('openEnvelope');
+// Nhạc nền: sử dụng file MP3 được phép sử dụng trong repository.
 const backgroundMusic = document.getElementById('backgroundMusic');
-const MUSIC_START = 52;
-
-backgroundMusic.addEventListener('loadedmetadata', () => {
-  if (backgroundMusic.duration > MUSIC_START) {
-    backgroundMusic.currentTime = MUSIC_START;
+const MUSIC_START = 57; // Đổi thành 0 nếu muốn phát từ đầu bài.
+let musicStarted = false;
+function playInvitationMusic() {
+  if (!backgroundMusic) return;
+  musicStarted = true;
+  const playNow = () => {
+    if (Number.isFinite(backgroundMusic.duration) && backgroundMusic.duration > MUSIC_START) {
+      try { backgroundMusic.currentTime = MUSIC_START; } catch (e) { /* Chờ dữ liệu tải */ }
+    }
+    backgroundMusic.play().catch(err => console.warn('Không thể tự phát nhạc:', err));
+  };
+  if (backgroundMusic.readyState >= 1) playNow();
+  else {
+    backgroundMusic.addEventListener('loadedmetadata', playNow, { once: true });
+    backgroundMusic.load();
   }
-});
+}
+if (backgroundMusic) {
+  backgroundMusic.addEventListener('ended', () => {
+    if (musicStarted) playInvitationMusic();
+  });
+}
 let opened=false,toastTimer;
 function toast(s){const el=document.getElementById('toast');el.textContent=s;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
 const reveals=[...document.querySelectorAll('.reveal')];
@@ -153,13 +156,7 @@ if (openBtn) {
 
     opened = true;
     openBtn.disabled = true;
-
-    if (backgroundMusic) {
-  backgroundMusic.currentTime = MUSIC_START;
-  backgroundMusic.play().catch(error => {
-    console.log('Trình duyệt chưa cho phép phát nhạc:', error);
-  });
-}
+    playInvitationMusic();
 
     if (intro) intro.classList.add('opening');
 
