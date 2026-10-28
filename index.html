@@ -122,7 +122,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const intro=document.getElementById('intro'),site=document.getElementById('site'),openBtn=document.getElementById('openEnvelope');
 // Nhạc nền: sử dụng file MP3 được phép sử dụng trong repository.
 const backgroundMusic = document.getElementById('backgroundMusic');
-const MUSIC_START = 57; // Đổi thành 0 nếu muốn phát từ đầu bài.
+const MUSIC_START = 0; // Đổi thành 0 nếu muốn phát từ đầu bài.
 let musicStarted = false;
 function playInvitationMusic() {
   if (!backgroundMusic) return;
