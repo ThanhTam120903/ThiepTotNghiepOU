@@ -107,6 +107,15 @@
 <footer class="footer"><div>THIỆP MỜI TỐT NGHIỆP · <span>MAI THÀNH TÂM</span> · 2027</div><div class="footer-credit">Designed &amp; Developed by <strong>Mai Thanh Tam</strong> · Information Technology</div></footer>
 </div><div aria-labelledby="wishTitle" aria-modal="true" class="wish-modal" id="wishModal" role="dialog"><div class="wish-dialog"><button aria-label="Đóng" class="close" id="closeWish" type="button">×</button><h3 id="wishTitle">Gửi lời chúc đến Tâm</h3><p>Một lời chúc nhỏ sẽ làm ngày tốt nghiệp thêm ý nghĩa.</p><form class="wish-form" id="wishForm"><label for="wishName">Tên của bạn</label><input id="wishName" maxlength="60" name="name" placeholder="Nhập tên của bạn" required=""/><label for="wishMessage">Lời chúc</label><textarea id="wishMessage" maxlength="500" name="message" placeholder="Viết lời chúc dành cho Tâm..." required=""></textarea><button class="btn" id="submitWish" type="submit">Gửi lời chúc ♥</button><div class="wish-status" id="formStatus" role="status"></div></form></div></div>
 <div aria-live="polite" class="toast" id="toast" role="status"></div>
+<!-- Trình phát chính thức Zing MP3: không hỗ trợ tua tự động chính xác tới 0:57 -->
+<div class="zing-player" id="zingPlayer">
+  <iframe
+    src="https://zingmp3.vn/embed/song/s0YMBJkIc13F?start=true"
+    width="100%" height="180" scrolling="no"
+    allow="autoplay; encrypted-media; fullscreen"
+    title="Trọn Vẹn Chính Mình (Rock Version) - Zing MP3">
+  </iframe>
+</div>
 <script>
 'use strict';
 /* THÔNG TIN LỄ TỐT NGHIỆP — BẠN CÓ THỂ CHỈNH LẠI KHI CẦN */
@@ -231,15 +240,6 @@ if(!reduced){const canvas=document.getElementById('stars'),ctx=canvas.getContext
   });
 })();
 </script>
-<!-- Trình phát chính thức Zing MP3: không hỗ trợ tua tự động chính xác tới 0:57 -->
-<div class="zing-player" id="zingPlayer">
-  <iframe
-    src="https://zingmp3.vn/embed/song/s0YMBJkIc13F?start=true"
-    width="100%" height="180" scrolling="no"
-    allow="autoplay; encrypted-media; fullscreen"
-    allowfullscreen
-    title="Trọn Vẹn Chính Mình (Rock Version) - Zing MP3">
-  </iframe>
-</div>
+
 </body>
 </html>
