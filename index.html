@@ -129,7 +129,30 @@ const reveals=[...document.querySelectorAll('.reveal')];
 reveals.forEach((el,i)=>{if(el.classList.contains('info-card')||el.classList.contains('photo-tile'))el.style.setProperty('--delay',(i%3)*110+'ms')});
 const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');observer.unobserve(e.target)}})},{threshold:.07,rootMargin:'0px 0px -4% 0px'}):null;
 function revealStart(){reveals.forEach(el=>{if(reduced||!observer)el.classList.add('show');else observer.observe(el)})}
-openBtn.addEventListener('click',()=>{if(opened)return;opened=true;openBtn.disabled=true;intro.classList.add('opening');setTimeout(()=>{intro.classList.add('exit');site.classList.add('visible');zingPlayer.classList.add('visible');window.scrollTo(0,0);revealStart();setTimeout(()=>intro.remove(),reduced?0:750)},reduced?80:1500)});
+if (openBtn) {
+  openBtn.addEventListener('click', () => {
+    if (opened) return;
+
+    opened = true;
+    openBtn.disabled = true;
+
+    if (intro) intro.classList.add('opening');
+
+    setTimeout(() => {
+      if (intro) intro.classList.add('exit');
+      if (site) site.classList.add('visible');
+      if (zingPlayer) zingPlayer.classList.add('visible');
+
+      window.scrollTo(0, 0);
+      revealStart();
+
+      setTimeout(() => {
+        if (intro) intro.remove();
+      }, reduced ? 0 : 750);
+
+    }, reduced ? 80 : 1500);
+  });
+}
 function scrollProgress(){const max=document.documentElement.scrollHeight-innerHeight;document.getElementById('progress').style.width=(max>0?scrollY/max*100:0)+'%'}addEventListener('scroll',scrollProgress,{passive:true});
 async function copy(s){try{await navigator.clipboard.writeText(s);return true}catch(e){const t=document.createElement('textarea');t.value=s;t.style.position='fixed';document.body.appendChild(t);t.select();const ok=document.execCommand('copy');t.remove();return ok}}
 document.getElementById('rsvpButton').addEventListener('click',()=>openWish());
